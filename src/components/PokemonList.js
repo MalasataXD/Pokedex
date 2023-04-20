@@ -1,26 +1,11 @@
 import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 
 export default function PokemonList({pokemon})
 {
-    // Used for getting information about the different Pokémon based on their name.
-    async function getPokemonInfo(pokemon) {
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemon);
-        if (!response.ok) {
-            throw new Error(`Could not get information for ${pokemon}`)
-        }
-
-        const data = await response.json();
-        var pokemonData = {
-            name: data.name,
-            id: data.id,
-            types: data.types.map(type => type.type.name),
-            image: data.sprites.other["official-artwork"].front_default
-        };
-        return pokemonData;
-    }
-
     // Used to make the individual cards for each Pokémon
-    function Card({ pokemon }) {
+    function Card({ pokemon })
+    {
         const [pokemonInfo, setPokemonInfo] = useState(null);
 
         useEffect(() => {
@@ -44,23 +29,29 @@ export default function PokemonList({pokemon})
 
         return (
             <div className="card">
-                {pokemonInfo ? (
+                    {pokemonInfo ? (
                     <>
-                        <div className="name">{pokemonInfo.name}</div>
-                        <div>
-                            <img width="96" height="96" src={pokemonInfo.image} alt={pokemonInfo.name} />
-                        </div>
-                        <div className="types">
-                            {pokemonInfo.types.map(type => (
-                                <div key={type} className={`type ${type}`}>
-                                    {type}
-                                </div>
-                            ))}
-                        </div>
+
+                            <div className="name">{pokemonInfo.name} #{pokemonInfo.id}</div>
+
+                            <div>
+                                <Link to={pokemonInfo ? `/stats/${pokemonInfo.name}` : "#"}>
+                                <img width="96" height="96" src={pokemonInfo.image} alt={pokemonInfo.name} />
+                                </Link>
+                            </div>
+                            <div className="types">
+                                {pokemonInfo.types.map(type => (
+                                    <div key={type} className={`type ${type}`}>
+                                        {type}
+                                    </div>
+                                ))}
+                            </div>
+
                     </>
-                ) : (
-                    <div>Loading...</div>
-                )}
+                    ) : (
+                        <div>Loading...</div>
+                    )}
+
             </div>
         );
     }
